@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.CourseChapterSectionMapper">
+
+
+    <!--在表course_chapter_section中插入章信息-->
+    <insert id="addChapterSection" parameterType="org.sang.bean.CourseChapterSection" useGeneratedKeys="true" keyProperty="id">
+        insert into course_chapter_section(chapterSectionId, chapterSerialNumber, chapterName, sectionQuantity, courseId, teacherId) values(#{chapterSectionId}, #{chapterSerialNumber}, #{chapterName}, #{sectionQuantity},#{courseId}, #{teacherId})
+    </insert>
+
+
+    <!--分页-->
+    <!--显示章节-->
+    <!--根据teacherId和courseId从表course_chapter_section中查询该教师该课程章节列表，从偏移量offset开始，初始行的偏移量为0，查询记录行数rows，用于分页展示-->
+    <select id="getCourseChapterSectionListByTeacherIdCourseId" resultType="org.sang.bean.CourseChapterSection">
+        select * from course_chapter_section where teacherId=#{teacherId} and courseId=#{courseId} limit #{offset},#{rows}
+    </select>
+    <!--根据teacherId和courseId从表course_chapter_section中查询该教师该课程的章数量-->
+    <select id="getCourseChapterSectionQuantityByTeacherIdCourseId" resultType="int">
+        select count(*) from course_chapter_section where teacherId=#{teacherId} and courseId=#{courseId}
+    </select>
+
+
+    <!--分页-->
+    <!--搜索章节-->
+    <!--根据teacherId和courseId和chapterName从表course_chapter_section中查询该教师该课程该章或名称相似章记录列表-->
+    <select id="getCourseChapterSectionListBySearch" resultType="org.sang.bean.CourseChapterSection">
+        select * from course_chapter_section where teacherId=#{teacherId} AND courseId=#{courseId} AND chapterName like concat('%', #{idOrName}, '%') limit #{offset},#{rows}
+    </select>
+    <!--根据teacherId和courseId和chapterName从表course中查询该教师该课程该章或名称相似章记录数量-->
+    <select id="getCourseChapterSectionQuantityBySearch" resultType="int">
+        select count(*) from course_chapter_section where teacherId=#{teacherId} AND courseId =#{courseId} AND chapterName like concat('%', #{idOrName}, '%')
+    </select>
+
+
+    <!--编辑章节-->
+    <update id="updateCourseChapterSectionById" parameterType="org.sang.bean.CourseChapterSection">
+        update course_chapter_section set chapterSerialNumber=#{chapterSerialNumber},chapterName=#{chapterName},sectionQuantity=#{sectionQuantity} where id=#{id}
+    </update>
+
+
+    <!--删除章节-->
+    <delete id="deleteCourseChapterSectionByIds">
+        DELETE FROM course_chapter_section WHERE id IN
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

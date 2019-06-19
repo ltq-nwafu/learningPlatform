@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.CourseMapper">
+
+
+    <!--在表Course中插入课程信息-->
+    <insert id="addCourse" parameterType="org.sang.bean.Course" useGeneratedKeys="true" keyProperty="id">
+        insert into course(courseId, courseName, coursePeriod, courseDescription, teacherId) values(#{courseId}, #{courseName}, #{coursePeriod}, #{courseDescription}, #{teacherId})
+    </insert>
+
+
+    <!--分页-->
+    <!--显示课程-->
+    <!--根据teacherId从表course中查询该教师全部课程记录列表，从偏移量offset开始，初始行的偏移量为0，查询记录行数rows，用于分页展示-->
+    <select id="getCourseListByTeacherId" resultType="org.sang.bean.Course">
+        select * from course where teacherId=#{teacherId} limit #{offset},#{rows}
+    </select>
+    <!--根据teacherId从表course中查询该教师全部课程记录数量-->
+    <select id="getCourseQuantityByTeacherId" resultType="int">
+        select count(*) from course where teacherId=#{teacherId}
+    </select>
+
+
+    <!--分页-->
+    <!--搜索课程-->
+    <!--根据teacherId和（courseId或courseName)从表course中查询该教师该课程（或课程名相似的课程）记录列表-->
+    <select id="getCourseListBySearch" resultType="org.sang.bean.Course">
+        select * from course where teacherId=#{teacherId} AND (courseId=#{idOrName} or courseName like concat('%', #{idOrName}, '%')) limit #{offset},#{rows}
+    </select>
+    <!--根据teacherId和（courseId或courseName)从表course中查询该教师该课程（或课程名相似的课程）记录数量-->
+    <select id="getCourseQuantityBySearch" resultType="int">
+        select count(*) from course where teacherId=#{teacherId} AND (courseId = #{idOrName} or courseName like concat('%', #{idOrName}, '%'))
+    </select>
+
+
+    <!--编辑课程-->
+    <update id="updateCourseById" parameterType="org.sang.bean.Course">
+        update course set courseName=#{courseName},coursePeriod=#{coursePeriod},courseDescription=#{courseDescription} where id=#{id}
+    </update>
+
+
+    <!--删除课程-->
+    <delete id="deleteCourseByIds">
+        DELETE FROM course WHERE id IN
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>
